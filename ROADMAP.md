@@ -1,6 +1,5 @@
 # Importantes
 - Criar o banco de dados local que armazenará todos os dados do jogo
-- Exibir o IP conectável local na interface web
 
 # Menos importância
 - Adicionar uma música inicial, que será tocada assim que o mestre abrir a página
