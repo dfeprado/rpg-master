@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"dfeprado.dev/rpg-master/rnet"
+)
 
 func main() {
-	fmt.Println("Hello, from RPG-Master!")
+	fmt.Println(rnet.GetPlayerConnectableIp())
 }
