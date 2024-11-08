@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/index.css"/>
+</head>
+<body>
+    <div id="start" class="center-content">
+        <button type="button" id="btn-play">Play</button>
+    </div>
+    <div id="app" class="h-full hidden">
+        <div class="flex h-full">
+            <nav class="nav nav-top flex flex-row flex-jend">
+                <button class="icon-button">
+                    <i class="icon">menu</i>
+                </button>
+            </nav>
+            <section class="grow" style="padding: 0 .5rem;">
+                <h1>Hello, Master.</h1>
+            </section>
+            <footer class="nav nav-bottom">
+                <p>
+                    Your players can join the server through 
+                    {{with .PlayerAddress}}<a href="{{.}}" target="_blank">{{.}}</a>{{end}} address.
+                </p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/static/index.js" type="module"></script>
+</body>
+</html>

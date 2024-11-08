@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"dfeprado.dev/rpg-master/net"
+	"dfeprado.dev/rpg-master/rpgmaster/master"
 )
 
 func main() {
@@ -12,8 +12,8 @@ func main() {
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
 
-	go net.StartPlayerServer(wg)
-	go net.StartMasterServer(wg)
+	// go net.StartPlayerServer(wg)
+	go master.StartServer(wg)
 
 	wg.Wait()
 }

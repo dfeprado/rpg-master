@@ -1,0 +1,96 @@
+/* RESET */
+* {
+    padding: 0;
+    margin: 0;
+    font-family: helvetica, arial, sans-serif;
+}
+
+html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Buttons */
+button {
+    padding: .75rem 1rem;
+    font-size: 1.2rem;
+    border-radius: .4rem;
+    border: 1px solid;
+}
+
+.icon-button {
+    padding: .2rem;
+    border: none;
+    background-color: inherit;
+}
+
+/* Flex */
+.flex {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.flex-jend {
+    justify-content: end;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+/* SIZE CLASSES */
+.h-full {
+    height: 100%;
+}
+
+/* UTILITY CLASSES */
+.center-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.hidden {
+    display: none
+}
+
+/* Styles for navigators - elements that are located on 
+screen edges (top, bottom, left, right) */
+.nav {
+    padding: .75rem .5rem;
+}
+
+.nav.nav-top {
+    border-bottom: 1px solid black;
+    margin-bottom: .5rem;
+}
+
+.nav.nav-bottom {
+    border-top: 1px solid black;
+    margin-top: .5rem;
+}
+
+/* Fonts from Google Symbols */
+@font-face {
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    src: url('/static/fonts/icons/MaterialSymbolsRounded[FILL,GRAD,opsz,wght].woff2') format('woff2');
+}
+
+.icon {
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    display: inline-block;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+}
