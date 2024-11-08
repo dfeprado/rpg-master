@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}}</title>
+    <style>
+        .hidden {
+            display: none
+        }
+    </style>
+</head>
+<body>
+    <div id="start">
+        <button type="button" id="btn-play">Play</button>
+    </div>
+    <div id="app" class="hidden">
+        <h1>Hello, Master.</h1>
+        <p>
+            Your players can join the server through 
+            {{with .PlayerAddress}}<a href="{{.}}" target="_blank">{{.}}</a>{{end}} address.
+        </p>
+    </div>
+    <script src="{{.Script}}" type="module"></script>
+</body>
+</html>
