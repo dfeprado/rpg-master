@@ -1,6 +1,18 @@
 const mainAudioEl = document.createElement("audio");
 document.body.appendChild(mainAudioEl);
 const btnPlay = document.querySelector("#btn-play");
+const btnOpenMobileMenu = document.querySelector("#btn-open-mobile-menu");
+const btnCloseMobileMenu = document.querySelector("#btn-close-mobile-menu");
+const menuMobile = document.querySelector("#menu-mobile");
+const mainView = document.querySelector("#mainView");
+
+btnOpenMobileMenu.addEventListener("click", () => {
+    menuMobile.classList.remove("hidden");
+});
+
+btnCloseMobileMenu.addEventListener("click", () => {
+    menuMobile.classList.add("hidden");
+});
 
 // TODO remove after dev
 window.addEventListener("DOMContentLoaded", () => btnPlay.click());

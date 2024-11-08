@@ -47,6 +47,22 @@ button {
     height: 100%;
 }
 
+.w-full {
+    width: 100%;
+}
+
+/* POSITION CLASSES */
+.absolute {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+/* BACKGROUND COLOR CLASSES */
+.bg-white {
+    background-color: white;
+}
+
 /* UTILITY CLASSES */
 .center-content {
     display: flex;
@@ -93,4 +109,18 @@ screen edges (top, bottom, left, right) */
     word-wrap: normal;
     white-space: nowrap;
     direction: ltr;
+}
+
+/* Menu */
+.menu ul {
+    list-style-type: none;
+}
+
+.menu ul li {
+    margin-bottom: .75rem;
+}
+
+.menu ul li button {
+    width: 100%;
+    border: 0;
 }
