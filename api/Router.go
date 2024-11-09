@@ -1,6 +1,8 @@
 package api
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 )
@@ -42,9 +44,31 @@ func (m *MiddlewareHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 type ApiRouter struct{}
 
+type Response struct {
+	Status     int    `json:"status"`
+	StatusText string `json:"statusText"`
+	Content    any    `json:"response"`
+}
+
+func (r *Response) SetStatus(code int, text string) {
+	r.Status = code
+	r.StatusText = text
+}
+
+type Context struct {
+	request  *http.Request
+	response *Response
+}
+
+func (ctx *Context) Request() *http.Request {
+	return ctx.request
+}
+
+type HandlerFn func(ctx *Context) any
+
 type Router struct {
 	staticContent  http.Handler
-	apiGetContent  map[string]http.HandlerFunc
+	apiGetContent  map[string]HandlerFn
 	apiRouteRegexp regexp.Regexp
 	middleware     http.HandlerFunc
 }
@@ -55,6 +79,10 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if matcher := router.apiRouteRegexp.FindStringSubmatch(r.URL.Path); matcher != nil {
+		ctx := &Context{
+			request:  r,
+			response: &Response{Status: http.StatusOK, StatusText: "OK"},
+		}
 		path := matcher[1]
 		if path == "" {
 			path = "/"
@@ -62,7 +90,14 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case "GET":
 			if route, ok := router.apiGetContent[path]; ok {
-				route(w, r)
+				ctx.response.Content = route(ctx)
+				jsonB, err := json.Marshal(ctx.response)
+				if err != nil {
+					http.Error(w, fmt.Sprintf("Error marshaling response: %v", err), http.StatusInternalServerError)
+					return
+				}
+				w.Header().Set("Content-Type", "text/json")
+				fmt.Fprint(w, string(jsonB))
 			} else {
 				http.Error(w, "Not found", http.StatusNotFound)
 			}
@@ -80,13 +115,13 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	http.Error(w, "Not found", http.StatusNotFound)
 }
 
-func (r *Router) Get(path string, fn http.HandlerFunc) {
+func (r *Router) Get(path string, fn HandlerFn) {
 	r.apiGetContent[path] = fn
 }
 
 func NewRouter(app *Application) *Router {
 	router := Router{
-		apiGetContent:  make(map[string]http.HandlerFunc),
+		apiGetContent:  make(map[string]HandlerFn),
 		apiRouteRegexp: *regexp.MustCompile("^/api(/?.*)$"),
 	}
 

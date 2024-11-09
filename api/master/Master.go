@@ -11,8 +11,18 @@ import (
 func RunMasterServer(wg *sync.WaitGroup) {
 	app := api.GetApplication()
 	router := api.NewRouter(app)
-	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "index of api")
+	router.Get("/", func(ctx *api.Context) any {
+		type Person struct {
+			Name string `json:"name"`
+			Age  uint8  `json:"age"`
+		}
+
+		response := &Person{"Foo", 32}
+		return response
+	})
+	router.Get("/none", func(ctx *api.Context) any {
+		fmt.Printf("Ok\n")
+		return nil
 	})
 
 	// TODO discover the next available port
