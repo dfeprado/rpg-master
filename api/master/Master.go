@@ -12,15 +12,14 @@ func RunMasterServer(wg *sync.WaitGroup) {
 	routes := http.NewServeMux()
 	routes.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "text/json")
-		// http.SetCookie(w, &http.Cookie{Name: "UI", Value: "MASTER"})
 		fmt.Fprintln(w, "{\"hello\": \"world\"}")
 	})
-	apiRoutes := api.NewHandler(routes)
+	app := api.GetApplication()
+	apiRoutes := api.NewHandler(routes, app)
 
 	// TODO discover the next available port
-	// TODO set the same port as players server
-	address := "127.0.0.1:8080"
-	fmt.Printf("You (master) can connect through %s\n", address)
+	address := fmt.Sprintf("127.0.0.1:%d", app.GetPort())
+	fmt.Printf("You (master) can connect through http://%s\n", address)
 	http.ListenAndServe(address, apiRoutes)
 	wg.Done()
 }

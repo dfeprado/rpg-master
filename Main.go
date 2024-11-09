@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"dfeprado.dev/rpg-master/api/master"
+	"dfeprado.dev/rpg-master/api/player"
 )
 
 func main() {
@@ -14,11 +15,13 @@ func main() {
 	if slices.Contains(os.Args, "--dev") {
 		fmt.Println(" DEV MODE")
 	}
+	fmt.Println()
 
 	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	wg.Add(2)
 
 	go master.RunMasterServer(wg)
+	go player.RunPlayerServer(wg)
 
 	wg.Wait()
 }
