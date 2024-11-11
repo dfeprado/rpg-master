@@ -24,6 +24,9 @@ func RunMasterServer(wg *sync.WaitGroup) {
 		fmt.Printf("Ok\n")
 		return nil
 	})
+	router.Get("/err", func(ctx *api.Context) any {
+		panic("Err path")
+	})
 
 	// TODO discover the next available port
 	address := fmt.Sprintf("127.0.0.1:%d", app.GetPort())

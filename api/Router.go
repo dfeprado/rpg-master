@@ -47,7 +47,7 @@ type ApiRouter struct{}
 type Response struct {
 	Status     int    `json:"status"`
 	StatusText string `json:"statusText"`
-	Content    any    `json:"response"`
+	Content    any    `json:"data"`
 }
 
 func (r *Response) SetStatus(code int, text string) {
@@ -74,45 +74,68 @@ type Router struct {
 }
 
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if err := recover(); err != nil {
+			statusText := fmt.Sprintf("router: error on %s path: %v", r.URL.Path, err)
+			response := &Response{
+				Status:     http.StatusInternalServerError,
+				StatusText: statusText,
+			}
+
+			if bytes, err := json.Marshal(response); err == nil {
+				fmt.Fprint(w, string(bytes))
+			} else {
+				fmt.Fprint(w, statusText)
+			}
+		}
+	}()
+
 	if router.middleware != nil {
 		router.middleware(w, r)
 	}
 
 	if matcher := router.apiRouteRegexp.FindStringSubmatch(r.URL.Path); matcher != nil {
-		ctx := &Context{
-			request:  r,
-			response: &Response{Status: http.StatusOK, StatusText: "OK"},
-		}
-		path := matcher[1]
-		if path == "" {
-			path = "/"
-		}
-		switch r.Method {
-		case "GET":
-			if route, ok := router.apiGetContent[path]; ok {
-				ctx.response.Content = route(ctx)
-				jsonB, err := json.Marshal(ctx.response)
-				if err != nil {
-					http.Error(w, fmt.Sprintf("Error marshaling response: %v", err), http.StatusInternalServerError)
-					return
-				}
-				w.Header().Set("Content-Type", "text/json")
-				fmt.Fprint(w, string(jsonB))
-			} else {
-				http.Error(w, "Not found", http.StatusNotFound)
-			}
-		default:
-			http.Error(w, "Invalid method "+r.Method, http.StatusMethodNotAllowed)
-		}
-		return
-	}
-
-	if router.staticContent != nil {
+		router.handleRoute(r, matcher, w)
+	} else if router.staticContent != nil {
 		router.staticContent.ServeHTTP(w, r)
 		return
+	} else {
+		http.Error(w, "Not found", http.StatusNotFound)
 	}
 
-	http.Error(w, "Not found", http.StatusNotFound)
+}
+
+func (router *Router) handleRoute(r *http.Request, matcher []string, w http.ResponseWriter) {
+	ctx := &Context{
+		request:  r,
+		response: &Response{Status: http.StatusOK, StatusText: "OK"},
+	}
+	path := matcher[1]
+	if path == "" {
+		path = "/"
+	}
+
+	var targetMap map[string]HandlerFn
+	switch r.Method {
+	case "GET":
+		targetMap = router.apiGetContent
+	default:
+		http.Error(w, "Invalid method "+r.Method, http.StatusMethodNotAllowed)
+		return
+	}
+
+	if route, ok := targetMap[path]; ok {
+		ctx.response.Content = route(ctx)
+		jsonB, err := json.Marshal(ctx.response)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error marshaling response: %v", err), http.StatusInternalServerError)
+			return
+		}
+		w.Header().Set("Content-Type", "text/json")
+		fmt.Fprint(w, string(jsonB))
+	} else {
+		http.Error(w, "Not found", http.StatusNotFound)
+	}
 }
 
 func (r *Router) Get(path string, fn HandlerFn) {
