@@ -1,13 +1,12 @@
 package master
 
 import (
-	"fmt"
-
 	"dfeprado.dev/rpg-master/api"
+	"dfeprado.dev/rpg-master/api/master/routers"
 )
 
-func SetRouters(routers *api.Router) {
-	routers.Get("/", func(ctx *api.Context) any {
+func SetRouters(masterRouters *api.Router) {
+	masterRouters.Get("/", func(ctx *api.Context) any {
 		type Person struct {
 			Name string `json:"name"`
 			Age  uint8  `json:"age"`
@@ -16,11 +15,6 @@ func SetRouters(routers *api.Router) {
 		response := &Person{"Foo", 32}
 		return response
 	})
-	routers.Get("/none", func(ctx *api.Context) any {
-		fmt.Printf("Ok\n")
-		return nil
-	})
-	routers.Get("/err", func(ctx *api.Context) any {
-		panic("Err path")
-	})
+
+	masterRouters.Get("/weapons", routers.GetSelectAllWeapons)
 }

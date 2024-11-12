@@ -6,6 +6,7 @@ import (
 	"slices"
 	"sync"
 
+	"dfeprado.dev/rpg-master/api/common/database"
 	"dfeprado.dev/rpg-master/api/master"
 	"dfeprado.dev/rpg-master/api/player"
 )
@@ -16,6 +17,8 @@ func main() {
 		fmt.Println(" DEV MODE")
 	}
 	fmt.Println()
+
+	database.OpenDB()
 
 	wg := &sync.WaitGroup{}
 	wg.Add(2)
